@@ -6,86 +6,83 @@
   <title>Nueva Vida - Installation Guide</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #fff; overflow: hidden; }
+    body { font-family: system-ui, -apple-system, sans-serif; background:#fff; overflow:hidden; }
     .wrap { width:100%; height:100vh; display:flex; flex-direction:column; }
 
-    .intro { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:3rem; background:#fff; }
-    .logo-img { width:200px; height:200px; object-fit:contain; }
+    .intro { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:2.5rem; background:#fff; }
+    .logo-img { width:220px; height:220px; object-fit:contain; }
     .lang-row { display:flex; gap:1.2rem; flex-wrap:wrap; justify-content:center; padding:0 1rem; }
     .lang-btn {
-      width:90px; height:90px; border:2px solid #d4a017; background:#fff;
-      border-radius:14px; font-size:3rem; cursor:pointer;
+      width:95px; height:95px; border:2px solid #d4a017; background:#fff;
+      border-radius:14px; font-size:3.2rem; cursor:pointer;
       transition:all 0.2s; display:flex; align-items:center; justify-content:center;
-      box-shadow: 0 2px 8px rgba(212,160,23,0.2);
+      box-shadow:0 2px 8px rgba(212,160,23,0.2);
     }
-    .lang-btn:hover { border-color:#b8860b; transform:scale(1.08); box-shadow:0 4px 16px rgba(212,160,23,0.35); }
+    .lang-btn:hover { border-color:#b8860b; transform:scale(1.08); }
     .lang-btn:active { transform:scale(0.95); }
 
     .car-screen { display:none; flex-direction:column; width:100%; height:100%; background:#fff; }
     .car-screen.active { display:flex; }
 
-    .prog-bar { width:100%; height:5px; background:#f0f0f0; display:flex; }
+    .prog-bar { width:100%; height:6px; background:#f0f0f0; display:flex; flex-shrink:0; }
     .seg { flex:1; height:100%; background:#e8d5a3; transition:background 0.3s; }
     .seg.done { background:#d4a017; }
     .seg.current { background:#d4a017; }
 
-    .car-content { flex:1; display:flex; align-items:center; justify-content:center; padding:1.5rem 2rem; position:relative; overflow:hidden; }
+    .car-content {
+      flex:1; display:flex; align-items:flex-start; justify-content:center;
+      padding:1rem 1.5rem; position:relative; overflow:hidden;
+    }
 
-    .tap-l, .tap-r { position:absolute; top:0; width:22%; height:100%; cursor:pointer; z-index:10; }
-    .tap-l { left:0; }
-    .tap-r { right:0; }
+    .tap-l, .tap-r { position:absolute; top:0; width:20%; height:100%; cursor:pointer; z-index:10; }
+    .tap-l { left:0; } .tap-r { right:0; }
 
-    .slide { display:none; text-align:center; width:100%; flex-direction:column; align-items:center; gap:1.2rem; animation:fadeSlide 0.35s ease; }
+    .slide { display:none; text-align:center; width:100%; flex-direction:column; align-items:center; gap:0.85rem; padding-top:0.5rem; animation:fadeSlide 0.3s ease; }
     .slide.active { display:flex; }
-    @keyframes fadeSlide { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeSlide { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
     .step-num {
-      font-size:6rem; font-weight:800; line-height:1;
-      background: linear-gradient(135deg, #c8a415 0%, #f5d87a 40%, #a07810 100%);
+      font-size:8rem; font-weight:900; line-height:0.9;
+      background:linear-gradient(135deg,#c8a415 0%,#f5d87a 45%,#a07810 100%);
       -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-      filter: drop-shadow(0 1px 2px rgba(180,130,0,0.25));
-      font-family: Georgia, serif;
+      font-family:Georgia,serif;
     }
-    .slide h2 { font-size:1.55rem; font-weight:700; color:#1a1a1a; letter-spacing:0.01em; }
-    .slide p { font-size:1.2rem; line-height:1.65; color:#444; max-width:420px; }
-    .slide .warn { font-size:1.1rem; color:#b91c1c; font-weight:700; background:#fff1f1; border:1.5px solid #f5c6c6; padding:0.6rem 1rem; border-radius:10px; display:inline-block; }
+    .divider { width:70px; height:3px; background:linear-gradient(90deg,#c8a415,#f0c93a,#c8a415); border-radius:2px; }
+    .slide h2 { font-size:1.9rem; font-weight:800; color:#1a1a1a; line-height:1.2; }
+    .slide p { font-size:1.35rem; line-height:1.6; color:#333; max-width:400px; }
+    .warn { font-size:1.25rem; color:#b91c1c; font-weight:800; background:#fff1f1; border:2px solid #f5c6c6; padding:0.65rem 1.2rem; border-radius:10px; display:inline-block; }
 
-    .logo-small {
-      position:absolute; top:14px; right:16px;
-      width:52px; height:52px; object-fit:contain; opacity:0.8;
-      z-index:5; pointer-events:none;
-    }
+    .logo-small { position:absolute; top:10px; right:14px; width:56px; height:56px; object-fit:contain; opacity:0.75; z-index:5; pointer-events:none; }
 
-    .final-title { font-size:2rem; font-weight:800; color:#1a1a1a; letter-spacing:0.01em; }
+    .final-title { font-size:2.4rem; font-weight:900; color:#1a1a1a; line-height:1.2; }
     .support-btn {
-      padding:0.9rem 2.2rem; font-size:1.1rem;
-      background: linear-gradient(135deg, #c8a415, #f0c93a, #a07810);
-      color:#fff; border:none; border-radius:10px; cursor:pointer;
-      font-weight:700; letter-spacing:0.03em;
-      box-shadow: 0 2px 10px rgba(180,130,0,0.35);
+      padding:1rem 2.5rem; font-size:1.2rem;
+      background:linear-gradient(135deg,#c8a415,#f0c93a,#a07810);
+      color:#fff; border:none; border-radius:12px; cursor:pointer;
+      font-weight:800; letter-spacing:0.03em;
+      box-shadow:0 2px 12px rgba(180,130,0,0.4);
       text-decoration:none; display:inline-block; transition:all 0.2s;
+      margin-top:0.3rem;
     }
-    .support-btn:hover { transform:scale(1.04); box-shadow:0 4px 18px rgba(180,130,0,0.45); }
+    .support-btn:hover { transform:scale(1.04); }
     .support-btn:active { transform:scale(0.97); }
-
-    .divider { width:60px; height:2px; background:linear-gradient(90deg,#c8a415,#f0c93a,#c8a415); border-radius:2px; margin:0 auto; }
   </style>
 </head>
 <body>
-<div class="wrap" id="app">
+<div class="wrap">
   <div class="intro" id="introScreen">
     <img src="Logo_gold.png" class="logo-img" alt="Nueva Vida" onerror="this.style.display='none'">
     <div class="lang-row">
-      <button class="lang-btn" onclick="startCarousel('de')">🇩🇪</button>
-      <button class="lang-btn" onclick="startCarousel('en')">🇬🇧</button>
-      <button class="lang-btn" onclick="startCarousel('fr')">🇫🇷</button>
-      <button class="lang-btn" onclick="startCarousel('es')">🇪🇸</button>
-      <button class="lang-btn" onclick="startCarousel('it')">🇮🇹</button>
+      <button class="lang-btn" onclick="go('de')">🇩🇪</button>
+      <button class="lang-btn" onclick="go('en')">🇬🇧</button>
+      <button class="lang-btn" onclick="go('fr')">🇫🇷</button>
+      <button class="lang-btn" onclick="go('es')">🇪🇸</button>
+      <button class="lang-btn" onclick="go('it')">🇮🇹</button>
     </div>
   </div>
 
   <div class="car-screen" id="carScreen">
-    <div class="prog-bar" id="progBar">
+    <div class="prog-bar">
       <div class="seg current" id="s0"></div>
       <div class="seg" id="s1"></div>
       <div class="seg" id="s2"></div>
@@ -94,103 +91,79 @@
     <div class="car-content">
       <div class="tap-l" onclick="prev()"></div>
       <img src="Logo_gold.png" class="logo-small" alt="" onerror="this.style.display='none'">
-      <div id="slides"></div>
+      <div id="slides" style="width:100%"></div>
       <div class="tap-r" onclick="next()"></div>
     </div>
   </div>
 </div>
 
 <script>
-const C = {
+const C={
   de:[
-    {num:'1',title:'HAUBE REINIGEN 🧼',text:'Fläche staub- und fettfrei machen.',warn:'❗ KEIN WACHS! KEINE POLITUR!'},
-    {num:'2',title:'VAKUUM DRÜCKEN ✋',text:'Saugnäpfe leicht anfeuchten. Direkt auf den Saugnapf drücken – NIEMALS auf die Blüte!',warn:''},
-    {num:'3',title:'SICHER ENTFERNEN 🔓',text:'Zum Abnehmen NUR an der kleinen Lasche ziehen.',warn:'❗ NIEMALS an der Blume reißen!'},
-    {num:'4',title:'GUTE FAHRT! 🚗💨',text:'',warn:'❗ MAX. 80 KM/H',isFinal:true}
+    {n:'1',t:'HAUBE REINIGEN 🧼',b:'Fläche staub- und fettfrei machen.',w:'❗ KEIN WACHS! KEINE POLITUR!'},
+    {n:'2',t:'VAKUUM DRÜCKEN ✋',b:'Saugnäpfe leicht anfeuchten. Direkt auf den Saugnapf drücken – NIEMALS auf die Blüte!',w:''},
+    {n:'3',t:'SICHER ENTFERNEN 🔓',b:'Zum Abnehmen NUR an der kleinen Lasche ziehen.',w:'❗ NIEMALS an der Blume reißen!'},
+    {n:'4',t:'GUTE FAHRT! 🚗💨',b:'',w:'❗ MAX. 80 KM/H',f:1}
   ],
   en:[
-    {num:'1',title:'CLEAN THE HOOD 🧼',text:'Surface must be completely dust and grease-free.',warn:'❗ NO WAX! NO POLISH!'},
-    {num:'2',title:'PRESS & SECURE ✋',text:'Moisten suction cups slightly. Press the suction cup directly – NEVER press the flower!',warn:''},
-    {num:'3',title:'SAFE REMOVAL 🔓',text:'To remove, pull ONLY the small tab on the suction cup.',warn:'❗ NEVER rip the flower off!'},
-    {num:'4',title:'HAVE A GREAT DRIVE! 🚗💨',text:'',warn:'❗ MAX. 80 KM/H',isFinal:true}
+    {n:'1',t:'CLEAN THE HOOD 🧼',b:'Surface must be completely dust and grease-free.',w:'❗ NO WAX! NO POLISH!'},
+    {n:'2',t:'PRESS & SECURE ✋',b:'Moisten suction cups slightly. Press the suction cup directly – NEVER press the flower!',w:''},
+    {n:'3',t:'SAFE REMOVAL 🔓',b:'To remove, pull ONLY the small tab on the suction cup.',w:'❗ NEVER rip the flower off!'},
+    {n:'4',t:'HAVE A GREAT DRIVE! 🚗💨',b:'',w:'❗ MAX. 80 KM/H',f:1}
   ],
   fr:[
-    {num:'1',title:'NETTOYER LE CAPOT 🧼',text:'La surface doit être sans poussière ni graisse.',warn:'❗ PAS DE CIRE ! PAS DE POLISH !'},
-    {num:'2',title:'PRESSER LA VENTOUSE ✋',text:'Humidifiez légèrement les ventouses. Appuyez directement sur la ventouse, JAMAIS sur la fleur !',warn:''},
-    {num:'3',title:'RETRAIT SÉCURISÉ 🔓',text:'Pour retirer, tirez UNIQUEMENT sur la petite languette.',warn:'❗ NE JAMAIS arracher la fleur !'},
-    {num:'4',title:'BONNE ROUTE ! 🚗💨',text:'',warn:'❗ MAX. 80 KM/H',isFinal:true}
+    {n:'1',t:'NETTOYER LE CAPOT 🧼',b:'La surface doit être sans poussière ni graisse.',w:'❗ PAS DE CIRE ! PAS DE POLISH !'},
+    {n:'2',t:'PRESSER LA VENTOUSE ✋',b:'Humidifiez légèrement les ventouses. Appuyez directement sur la ventouse, JAMAIS sur la fleur !',w:''},
+    {n:'3',t:'RETRAIT SÉCURISÉ 🔓',b:'Pour retirer, tirez UNIQUEMENT sur la petite languette.',w:'❗ NE JAMAIS arracher la fleur !'},
+    {n:'4',t:'BONNE ROUTE ! 🚗💨',b:'',w:'❗ MAX. 80 KM/H',f:1}
   ],
   es:[
-    {num:'1',title:'LIMPIAR EL CAPÓ 🧼',text:'La superficie debe estar sin polvo ni grasa.',warn:'❗ ¡CERO CERA! ¡CERO PULIMIENTO!'},
-    {num:'2',title:'PRESIONAR LA VENTOSA ✋',text:'Humedezca ligeramente las ventosas. Presione directamente la ventosa, ¡NUNCA la flor!',warn:''},
-    {num:'3',title:'RETIRADA SEGURA 🔓',text:'Para quitar, tire SOLO de la pequeña lengüeta.',warn:'❗ ¡NUNCA arranque la flor!'},
-    {num:'4',title:'¡BUEN VIAJE! 🚗💨',text:'',warn:'❗ MÁX. 80 KM/H',isFinal:true}
+    {n:'1',t:'LIMPIAR EL CAPÓ 🧼',b:'La superficie debe estar sin polvo ni grasa.',w:'❗ ¡CERO CERA! ¡CERO PULIMIENTO!'},
+    {n:'2',t:'PRESIONAR LA VENTOSA ✋',b:'Humedezca ligeramente las ventosas. Presione directamente la ventosa, ¡NUNCA la flor!',w:''},
+    {n:'3',t:'RETIRADA SEGURA 🔓',b:'Para quitar, tire SOLO de la pequeña lengüeta.',w:'❗ ¡NUNCA arranque la flor!'},
+    {n:'4',t:'¡BUEN VIAJE! 🚗💨',b:'',w:'❗ MÁX. 80 KM/H',f:1}
   ],
   it:[
-    {num:'1',title:'PULIRE IL COFANO 🧼',text:'La superficie deve essere senza polvere e grasso.',warn:'❗ NIENTE CERA! NIENTE LUCIDO!'},
-    {num:'2',title:'PREMERE LA VENTOSA ✋',text:'Inumidire leggermente le ventose. Premere direttamente la ventosa, MAI il fiore!',warn:''},
-    {num:'3',title:'RIMOZIONE SICURA 🔓',text:'Per rimuovere, tirare SOLO la piccola linguetta.',warn:'❗ MAI strappare il fiore!'},
-    {num:'4',title:'BUON VIAGGIO! 🚗💨',text:'',warn:'❗ MAX. 80 KM/H',isFinal:true}
+    {n:'1',t:'PULIRE IL COFANO 🧼',b:'La superficie deve essere senza polvere e grasso.',w:'❗ NIENTE CERA! NIENTE LUCIDO!'},
+    {n:'2',t:'PREMERE LA VENTOSA ✋',b:'Inumidire leggermente le ventose. Premere direttamente la ventosa, MAI il fiore!',w:''},
+    {n:'3',t:'RIMOZIONE SICURA 🔓',b:'Per rimuovere, tirare SOLO la piccola linguetta.',w:'❗ MAI strappare il fiore!'},
+    {n:'4',t:'BUON VIAGGIO! 🚗💨',b:'',w:'❗ MAX. 80 KM/H',f:1}
   ]
 };
-const ST = {de:'Support kontaktieren',en:'Contact Support',fr:'Contacter le Support',es:'Contactar Soporte',it:'Contatta il Supporto'};
+const ST={de:'Support kontaktieren',en:'Contact Support',fr:'Contacter le Support',es:'Contactar Soporte',it:'Contatta il Supporto'};
+let lang='de',cur=0,timer=null;
 
-let lang='de', cur=0, timer=null;
-
-function startCarousel(l){
+function go(l){
   lang=l; cur=0;
   document.getElementById('introScreen').style.display='none';
   document.getElementById('carScreen').classList.add('active');
-  renderSlides();
-  showSlide(0);
-  autoAdv();
+  render(); show(0); adv();
 }
-
-function renderSlides(){
+function render(){
   const c=document.getElementById('slides'); c.innerHTML='';
   C[lang].forEach((s,i)=>{
     const d=document.createElement('div');
     d.className='slide'+(i===0?' active':'');
-    if(s.isFinal){
-      d.innerHTML=`
-        <div class="step-num">${s.num}</div>
-        <div class="divider"></div>
-        <div class="final-title">${s.title}</div>
-        ${s.warn?`<div class="warn">${s.warn}</div>`:''}
-        <a href="mailto:info@nuevavida-ftv.de" class="support-btn">${ST[lang]}</a>`;
+    if(s.f){
+      d.innerHTML=`<div class="step-num">${s.n}</div><div class="divider"></div><div class="final-title">${s.t}</div>${s.w?`<div class="warn">${s.w}</div>`:''}<a href="mailto:info@nuevavida-ftv.de" class="support-btn">${ST[lang]}</a>`;
     } else {
-      d.innerHTML=`
-        <div class="step-num">${s.num}</div>
-        <div class="divider"></div>
-        <h2>${s.title}</h2>
-        ${s.text?`<p>${s.text}</p>`:''}
-        ${s.warn?`<div class="warn">${s.warn}</div>`:''}`;
+      d.innerHTML=`<div class="step-num">${s.n}</div><div class="divider"></div><h2>${s.t}</h2>${s.b?`<p>${s.b}</p>`:''}${s.w?`<div class="warn">${s.w}</div>`:''}`;
     }
     c.appendChild(d);
   });
 }
-
-function showSlide(i){
+function show(i){
   document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.seg').forEach((s,j)=>{
     s.classList.remove('current','done');
-    if(j<i) s.classList.add('done');
-    else if(j===i) s.classList.add('current');
+    if(j<i) s.classList.add('done'); else if(j===i) s.classList.add('current');
   });
-  const slides=document.querySelectorAll('.slide');
-  if(slides[i]) slides[i].classList.add('active');
+  document.querySelectorAll('.slide')[i]?.classList.add('active');
 }
-
-function next(){
-  if(cur<C[lang].length-1){ cur++; showSlide(cur); if(cur<C[lang].length-1) resetAdv(); else clearTimeout(timer); }
-}
-function prev(){
-  if(cur>0){ cur--; showSlide(cur); resetAdv(); }
-}
-function autoAdv(){
-  if(cur<C[lang].length-1) timer=setTimeout(()=>{ next(); autoAdv(); },5000);
-}
-function resetAdv(){ clearTimeout(timer); autoAdv(); }
+function next(){if(cur<C[lang].length-1){cur++;show(cur);cur<C[lang].length-1?resetAdv():clearTimeout(timer);}}
+function prev(){if(cur>0){cur--;show(cur);resetAdv();}}
+function adv(){if(cur<C[lang].length-1)timer=setTimeout(()=>{next();adv();},5000);}
+function resetAdv(){clearTimeout(timer);adv();}
 </script>
 </body>
 </html>
