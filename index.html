@@ -60,7 +60,7 @@
     .tap-l, .tap-r { position:absolute; top:0; width:20%; height:100%; cursor:pointer; z-index:10; -webkit-tap-highlight-color: transparent; }
     .tap-l { left:0; } .tap-r { right:0; }
 
-    /* LOGO SUPERIOR CENTRADO (El gran cambio) */
+    /* LOGO SUPERIOR CENTRADO */
     .logo-small { 
       width: 160px; 
       height: auto; 
@@ -238,4 +238,9 @@ function show(i){
   document.querySelectorAll('.slide')[i]?.classList.add('active');
 }
 function next(){if(cur<C[lang].length-1){cur++;show(cur);cur<C[lang].length-1?resetAdv():clearTimeout(timer);}}
-function prev
+function prev(){if(cur>0){cur--;show(cur);resetAdv();}}
+function adv(){if(cur<C[lang].length-1)timer=setTimeout(()=>{next();adv();},5000);}
+function resetAdv(){clearTimeout(timer);adv();}
+</script>
+</body>
+</html>
