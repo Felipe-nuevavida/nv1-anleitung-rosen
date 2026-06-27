@@ -170,7 +170,7 @@ function show(i){
 }
 function next(){if(cur<C[lang].length-1){cur++;show(cur);cur<C[lang].length-1?resetAdv():clearTimeout(timer);}}
 function prev(){if(cur>0){cur--;show(cur);resetAdv();}}
-function adv(){if(cur<C[lang].length-1)timer=setTimeout(()=>{next();adv();},5000);}
+function adv(){if(cur<C[lang].length-1)timer=setTimeout(()=>{next();adv();},8000);}
 function resetAdv(){clearTimeout(timer);adv();}
 </script>
 </body>
