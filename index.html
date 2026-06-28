@@ -6,7 +6,7 @@
   <title>Nueva Vida - Installation Guide</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; background:#fff; overflow:hidden; }
+    body { font-family: system-ui, -apple-system, sans-serif; background:#fff; overflow:hidden; user-select: none; -webkit-user-select: none; }
     .wrap { width:100%; height:100vh; display:flex; flex-direction:column; }
 
     .intro { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:2.5rem; background:#fff; }
@@ -21,20 +21,27 @@
     .lang-btn:hover { border-color:#b8860b; transform:scale(1.08); }
     .lang-btn:active { transform:scale(0.95); }
 
-    .car-screen { display:none; flex-direction:column; width:100%; height:100%; background:#fff; }
+    .car-screen { display:none; flex-direction:column; width:100%; height:100%; background:#fff; position:relative; }
     .car-screen.active { display:flex; }
 
-    .prog-bar { width:100%; height:6px; background:#f0f0f0; display:flex; flex-shrink:0; }
-    .seg { flex:1; height:100%; background:#e8d5a3; transition:background 0.3s; }
-    .seg.done { background:#d4a017; }
-    .seg.current { background:#d4a017; }
+    /* Estilo IG Stories para la barra de progreso */
+    .prog-bar { width:100%; height:4px; display:flex; gap:6px; padding:12px 12px 0 12px; flex-shrink:0; z-index:20; }
+    .seg { flex:1; height:100%; background:rgba(212,160,23,0.25); border-radius:4px; overflow:hidden; }
+    .fill { height:100%; width:0%; background:#d4a017; border-radius:4px; }
+    
+    /* Estados de la barra */
+    .seg.done .fill { width:100%; }
+    .seg.current .fill { animation: fillUp 8s linear forwards; }
+    .is-paused .seg.current .fill { animation-play-state: paused; }
+    
+    @keyframes fillUp { from { width:0%; } to { width:100%; } }
 
     .car-content {
       flex:1; display:flex; align-items:flex-start; justify-content:center;
       padding:1rem 1.5rem; position:relative; overflow:hidden;
     }
 
-    .tap-l, .tap-r { position:absolute; top:0; width:20%; height:100%; cursor:pointer; z-index:10; }
+    .tap-l, .tap-r { position:absolute; top:0; width:25%; height:100%; cursor:pointer; z-index:10; }
     .tap-l { left:0; } .tap-r { right:0; }
 
     .slide { display:none; text-align:center; width:100%; flex-direction:column; align-items:center; gap:0.85rem; padding-top:0.5rem; animation:fadeSlide 0.3s ease; }
@@ -52,7 +59,7 @@
     .slide p { font-size:1.25rem; line-height:1.5; color:#333; max-width:420px; }
     .warn { font-size:1.15rem; color:#b91c1c; font-weight:800; background:#fff1f1; border:2px solid #f5c6c6; padding:0.65rem 1.2rem; border-radius:10px; display:inline-block; }
 
-    .logo-small { position:absolute; top:10px; right:14px; width:56px; height:56px; object-fit:contain; opacity:0.75; z-index:5; pointer-events:none; }
+    .logo-small { position:absolute; top:15px; right:14px; width:56px; height:56px; object-fit:contain; opacity:0.75; z-index:5; pointer-events:none; }
 
     .final-title { font-size:2.4rem; font-weight:900; color:#1a1a1a; line-height:1.2; }
     .support-btn {
@@ -62,7 +69,7 @@
       font-weight:800; letter-spacing:0.03em;
       box-shadow:0 2px 12px rgba(180,130,0,0.4);
       text-decoration:none; display:inline-block; transition:all 0.2s;
-      margin-top:0.3rem;
+      margin-top:0.3rem; position:relative; z-index:30;
     }
     .support-btn:hover { transform:scale(1.04); }
     .support-btn:active { transform:scale(0.97); }
@@ -133,25 +140,37 @@ const C={
   ]
 };
 const ST={de:'Support kontaktieren',en:'Contact Support',fr:'Contacter le Support',es:'Contactar Soporte',it:'Contatta il Supporto'};
-let lang='de',cur=0,timer=null;
+let lang='de',cur=0;
 
 function go(l){
   lang=l; cur=0;
   document.getElementById('introScreen').style.display='none';
   document.getElementById('carScreen').classList.add('active');
-  render(); show(0); adv();
+  render(); show(0);
 }
+
 function render(){
   const c=document.getElementById('slides'); c.innerHTML='';
   const pb=document.getElementById('progBar'); pb.innerHTML='';
   
   C[lang].forEach((s,i)=>{
+    // Crear segmento de barra de progreso
     const seg=document.createElement('div');
-    seg.className='seg'+(i===0?' current':'');
+    seg.className='seg';
+    const fill=document.createElement('div');
+    fill.className='fill';
+    
+    // Cuando la animación de la barra termina, pasar a la siguiente
+    fill.addEventListener('animationend', () => {
+      if(i === cur && cur < C[lang].length - 1) next();
+    });
+    
+    seg.appendChild(fill);
     pb.appendChild(seg);
 
+    // Crear diapositiva
     const d=document.createElement('div');
-    d.className='slide'+(i===0?' active':'');
+    d.className='slide';
     if(s.f){
       d.innerHTML=`<div class="step-num">${s.n}</div><div class="divider"></div><div class="final-title">${s.t}</div>${s.b?`<p style="margin-top:0.5rem; font-weight:600;">${s.b}</p>`:''}${s.w?`<div class="warn" style="margin-top:0.5rem;">${s.w}</div>`:''}<a href="mailto:info@nuevavida-ftv.de" class="support-btn">${ST[lang]}</a>`;
     } else {
@@ -160,19 +179,33 @@ function render(){
     c.appendChild(d);
   });
 }
+
 function show(i){
   document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.seg').forEach((s,j)=>{
     s.classList.remove('current','done');
-    if(j<i) s.classList.add('done'); else if(j===i) s.classList.add('current');
+    if(j<i) s.classList.add('done'); 
+    else if(j===i) {
+      // Forzar reinicio de animación CSS
+      void s.offsetWidth;
+      s.classList.add('current');
+    }
   });
   const slides = document.querySelectorAll('.slide');
   if(slides[i]) slides[i].classList.add('active');
 }
-function next(){if(cur<C[lang].length-1){cur++;show(cur);cur<C[lang].length-1?resetAdv():clearTimeout(timer);}}
-function prev(){if(cur>0){cur--;show(cur);resetAdv();}}
-function adv(){if(cur<C[lang].length-1)timer=setTimeout(()=>{next();adv();},8000);}
-function resetAdv(){clearTimeout(timer);adv();}
+
+function next(){ if(cur<C[lang].length-1){ cur++; show(cur); } }
+function prev(){ if(cur>0){ cur--; show(cur); } }
+
+// Lógica de Pausa al mantener pulsado (Touch y Mouse)
+const carScreen = document.getElementById('carScreen');
+carScreen.addEventListener('mousedown', () => carScreen.classList.add('is-paused'));
+carScreen.addEventListener('mouseup', () => carScreen.classList.remove('is-paused'));
+carScreen.addEventListener('mouseleave', () => carScreen.classList.remove('is-paused'));
+carScreen.addEventListener('touchstart', () => carScreen.classList.add('is-paused'));
+carScreen.addEventListener('touchend', () => carScreen.classList.remove('is-paused'));
+
 </script>
 </body>
 </html>
